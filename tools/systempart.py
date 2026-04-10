@@ -133,7 +133,7 @@ def disk_type_label(dev):
     if tran == "usb": return "USB"
     if rota is False or rota == "0" or rota == 0: return "SSD"
     if rota is True or rota == "1" or rota == 1: return "HDD"
-    return tran.upper() if tran else "â€”"
+    return tran.upper() if tran else "-"
 
 def get_disk_usage(mp):
     if not mp or not os.path.ismount(mp): return None
@@ -615,9 +615,9 @@ class SystemPartWindow(QMainWindow):
 
             item = QTreeWidgetItem([
                 d["name"], human_size(d.get("size")),
-                dtype, d.get("fstype") or "â€”",
-                d.get("mountpoint") or "â€”", d.get("label") or "â€”",
-                desc or "â€”"])
+                dtype, d.get("fstype") or "-",
+                d.get("mountpoint") or "-", d.get("label") or "-",
+                desc or "-"])
             item.setData(0, Qt.ItemDataRole.UserRole, ("disk", d))
             f = item.font(0); f.setBold(True); item.setFont(0, f)
             item.setForeground(0, QColor("#00d4aa"))
@@ -630,9 +630,9 @@ class SystemPartWindow(QMainWindow):
                 cu_str = f" ({cu}%)" if cu else ""
                 ci = QTreeWidgetItem([
                     f"  {ch['name']}", human_size(ch.get("size")) + cu_str,
-                    ch.get("type", ""), ch.get("fstype") or "â€”",
-                    ch.get("mountpoint") or "â€”", ch.get("label") or "â€”",
-                    "â€”"])
+                    ch.get("type", ""), ch.get("fstype") or "-",
+                    ch.get("mountpoint") or "-", ch.get("label") or "-",
+                    "-"])
                 ci.setData(0, Qt.ItemDataRole.UserRole, ("part", ch))
                 item.addChild(ci)
             self.tree.addTopLevelItem(item)

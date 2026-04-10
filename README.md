@@ -1,4 +1,6 @@
-# SystemBU ISO Creator
+# systembu
+
+> Beta status: This project is still under active development and some parts may change or break.
 
 SystemBU ISO Creator builds a Debian amd64 live ISO with a lightweight XFCE desktop, a quiet boot experience, and two bundled desktop tools:
 

@@ -348,7 +348,7 @@ class BuildWorker:
     def stop(self) -> None:
         self._stop = True
         if (p := self._proc) and p.poll() is None:
-            self.on_log("Stop angefordert â€¦")
+            self.on_log("Stop angefordert ...")
             try:
                 p.send_signal(signal.SIGINT)
             except Exception:
@@ -361,7 +361,7 @@ class BuildWorker:
             self._ensure_workspace()
             cleanup = True
             if self.cfg.install_prereqs:
-                self.on_status("Host-AbhÃ¤ngigkeiten installieren")
+                self.on_status("Host-Abhaengigkeiten installieren")
                 self._ensure_host_prereqs()
             self.on_status("Workspace vorbereiten")
             self._run(["lb", "clean", *FULL_BUILD_CLEAN_ARGS], cwd=self.cfg.workspace, allow_fail=True)
@@ -369,7 +369,7 @@ class BuildWorker:
             self._run_lb_config()
             self.on_status("Chroot-Dateien und Hook vorbereiten")
             self._write_customizations()
-            self.on_status("ISO bauen (dauert â€¦)")
+            self.on_status("ISO bauen (dauert ...)")
             self._run(["lb", "build"], cwd=self.cfg.workspace)
             iso = self._find_and_move_iso()
             cleanup = False
@@ -388,7 +388,7 @@ class BuildWorker:
         if os.name == "nt":
             raise RuntimeError("Muss in WSL/Linux laufen, nicht mit Windows-Python.")
         if not is_root_user():
-            raise RuntimeError("Bitte als root starten (sudo -E python3 â€¦).")
+            raise RuntimeError("Bitte als root starten (sudo -E python3 ...).")
         if not shutil.which("dpkg-deb"):
             raise RuntimeError("dpkg-deb nicht gefunden. Bitte dpkg installieren.")
         for fp, label in ((self.cfg.setup_script, "build/systembu_desktop_setup.sh"),
@@ -397,7 +397,7 @@ class BuildWorker:
             if not fp.is_file():
                 raise FileNotFoundError(f"{label} nicht gefunden: {fp}")
         if not re.fullmatch(r"[a-z0-9][a-z0-9._-]*", self.cfg.image_name):
-            raise ValueError("UngÃ¼ltiger ISO-Name (nur Kleinbuchstaben, Zahlen, .-_ erlaubt).")
+            raise ValueError("Ungueltiger ISO-Name (nur Kleinbuchstaben, Zahlen, .-_ erlaubt).")
         if not self.cfg.mirror.startswith(("http://", "https://")):
             raise ValueError("Mirror muss mit http(s):// beginnen.")
 
@@ -432,7 +432,7 @@ class BuildWorker:
             shutil.rmtree(ws, ignore_errors=True)
         ws.mkdir(parents=True, exist_ok=True)
         if str(ws).startswith("/mnt/"):
-            self.on_log("Hinweis: Build im Windows-FS (/mnt/â€¦) â€“ kann langsamer sein.")
+            self.on_log("Hinweis: Build im Windows-FS (/mnt/...) - kann langsamer sein.")
         self.on_log(f"Workspace: {ws}")
 
     def _run_lb_config(self) -> None:
@@ -465,7 +465,7 @@ class BuildWorker:
     def _write_customizations(self) -> None:
         cfg_dir = self.cfg.workspace / "config"
         if not cfg_dir.exists():
-            raise RuntimeError("lb config fehlgeschlagen â€“ config/ fehlt.")
+            raise RuntimeError("lb config fehlgeschlagen - config/ fehlt.")
         pkg_dir = cfg_dir / "package-lists"
         deb_dir = cfg_dir / "includes.chroot/usr/local/share/rescue/packages"
         inc_dir = cfg_dir / "includes.chroot/root/rescue-build"
@@ -681,7 +681,7 @@ class BuildWorker:
     def _cleanup(self) -> None:
         ws = self.cfg.workspace
         if ws.exists():
-            self.on_log(f"LÃ¶sche Temp-Ordner: {ws}")
+            self.on_log(f"Loesche Temp-Ordner: {ws}")
             shutil.rmtree(ws, ignore_errors=True)
 
     def _run(self, cmd: list[str], *, cwd: Path | None = None, allow_fail: bool = False) -> None:
@@ -737,7 +737,7 @@ class WslRelayWorker:
     def stop(self) -> None:
         self._stop = True
         if (p := self._proc) and p.poll() is None:
-            self.on_log("Stop angefordert â€¦")
+            self.on_log("Stop angefordert ...")
             try:
                 p.terminate()
             except Exception:
@@ -848,7 +848,7 @@ class MainWindow:
         info = tk.Label(
             root,
             text="Erstellt eine Debian amd64 Live-ISO mit XFCE + SystemBU und SystemPart "
-                 "auf Basis von build/systembu_desktop_setup.sh (fÃ¼r WSL unter Windows).",
+                 "auf Basis von build/systembu_desktop_setup.sh (fuer WSL unter Windows).",
             justify="left",
             anchor="w",
             wraplength=920,
@@ -934,7 +934,7 @@ class MainWindow:
 
     def start_build(self) -> None:
         if self.worker:
-            self.messagebox.showwarning("LÃ¤uft", "Es lÃ¤uft bereits ein Build.")
+            self.messagebox.showwarning("Laeuft", "Es laeuft bereits ein Build.")
             return
         cfg = self._default_config()
         try:
@@ -975,7 +975,7 @@ class MainWindow:
 
         self.start_btn.configure(state="disabled")
         self.stop_btn.configure(state="normal")
-        self._set_status("Build lÃ¤uft â€¦")
+        self._set_status("Build laeuft ...")
         self.build_started_at = time.monotonic()
 
         self.worker_thread = threading.Thread(target=self._run_worker, daemon=True)
@@ -1004,7 +1004,7 @@ class MainWindow:
 
     def stop_build(self) -> None:
         if self.worker:
-            self._set_status("Stoppe â€¦")
+            self._set_status("Stoppe ...")
             self.worker.stop()
             self.stop_btn.configure(state="disabled")
 
@@ -1019,7 +1019,7 @@ class MainWindow:
         self._set_status("Build erfolgreich")
         self._log(f"\nFertig: {iso}")
         if elapsed:
-            self.messagebox.showinfo("Fertig", f"ISO erstellt:\n{iso}\n\nBenÃ¶tigte Zeit: {elapsed}")
+            self.messagebox.showinfo("Fertig", f"ISO erstellt:\n{iso}\n\nBenoetigte Zeit: {elapsed}")
         else:
             self.messagebox.showinfo("Fertig", f"ISO erstellt:\n{iso}")
 
@@ -1037,7 +1037,7 @@ class MainWindow:
 
     def _on_close(self) -> None:
         if self.worker_thread and self.worker_thread.is_alive():
-            self.messagebox.showwarning("LÃ¤uft", "Bitte erst den Build stoppen.")
+            self.messagebox.showwarning("Laeuft", "Bitte erst den Build stoppen.")
         else:
             self.root.destroy()
 
@@ -1087,7 +1087,7 @@ def main(args: argparse.Namespace) -> int:
     try:
         import tkinter  # noqa: F401
     except Exception as exc:
-        print(f"tkinter ist nicht verfÃ¼gbar: {exc}", file=sys.stderr)
+        print(f"tkinter ist nicht verfuegbar: {exc}", file=sys.stderr)
         return 1
     window = MainWindow()
     return window.run()

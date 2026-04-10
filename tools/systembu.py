@@ -366,13 +366,13 @@ def disk_type_label(dev):
     if tran == "usb": return "USB"
     if rota is False or rota == "0" or rota == 0: return "SSD"
     if rota is True or rota == "1" or rota == 1: return "HDD"
-    return tran.upper() if tran else "â€”"
+    return tran.upper() if tran else "-"
 
 def display_fstype(dev):
     """Return human-friendly filesystem name (FAT32 instead of vfat, etc.)."""
     fs = (dev.get("fstype") or "").lower()
     if not fs:
-        return "â€”"
+        return "-"
     if fs == "vfat":
         name = dev.get("name", "")
         if name:
@@ -423,7 +423,7 @@ class BackupDialog(QDialog):
         bt = "Full Disk" if d.get("type") == "disk" else "Partition"
         info = QLabel(
             f"<b>{d.get('name','')}</b> | {bt} | {human_size(d.get('size'))} | "
-            f"{d.get('fstype') or 'â€”'} | {(d.get('model') or '').strip() or 'â€”'}")
+            f"{d.get('fstype') or '-'} | {(d.get('model') or '').strip() or '-'}")
         info.setObjectName("metaLabel")
         info.setWordWrap(True)
         layout.addWidget(info)
@@ -525,7 +525,7 @@ class RestoreDialog(QDialog):
         bt = "Full Disk" if d.get("type") == "disk" else "Partition"
         info = QLabel(
             f"Target: <b>{d.get('name','')}</b> | {bt} | "
-            f"{human_size(d.get('size'))} | {d.get('fstype') or 'â€”'}")
+            f"{human_size(d.get('size'))} | {d.get('fstype') or '-'}")
         info.setObjectName("metaLabel")
         info.setWordWrap(True)
         layout.addWidget(info)
@@ -810,7 +810,7 @@ class BackupWorker(QThread):
                     for c in children:
                         self.log_msg.emit(f"    {c.get('name')} | {c.get('fstype','?')} | "
                                           f"{human_size(c.get('size',0))} | "
-                                          f"mount={c.get('mountpoint','â€”')}")
+                                          f"mount={c.get('mountpoint','-')}")
                     return children
         except Exception as e:
             self.log_msg.emit(f"  Warning: lsblk error: {e}")
@@ -1057,14 +1057,14 @@ class BackupWorker(QThread):
         for p in parts:
             u = self._used_bytes(p["name"])
             total_used += u if u > 0 else p.get("size", 0)
-        self.log_msg.emit(f"  GeschÃ¤tzte Datenmenge: {human_size(total_used)}")
+        self.log_msg.emit(f"  Geschaetzte Datenmenge: {human_size(total_used)}")
         done = 0
 
         if not parts:
             self.finished_sig.emit(False,
                 f"Keine Partitionen auf {device} gefunden!\n\n"
-                f"lsblk zeigt keine Kinder fÃ¼r dieses GerÃ¤t.\n"
-                f"Evtl. falsches GerÃ¤t gewÃ¤hlt?")
+                f"lsblk zeigt keine Kinder fuer dieses Geraet.\n"
+                f"Evtl. falsches Geraet gewaehlt?")
             return
 
         self.log_msg.emit("Saving partition table...")
@@ -1600,13 +1600,13 @@ class SystemBUWindow(QMainWindow):
                 usage_pct = round((disk_used / disk_total) * 100, 1)
                 used_str = f"{human_size(disk_used)} ({usage_pct}%)"
             else:
-                used_str = "â€”"
+                used_str = "-"
             item = QTreeWidgetItem([
                 desc,
                 f"{ro}{d['name']}", human_size(d.get("size")),
                 used_str,
                 dtype, display_fstype(d),
-                d.get("mountpoint") or "â€”", d.get("label") or "â€”"])
+                d.get("mountpoint") or "-", d.get("label") or "-"])
             item.setData(0, Qt.ItemDataRole.UserRole, d)
             f = item.font(0); f.setBold(True); item.setFont(0, f)
             item.setForeground(0, QColor("#00d4aa"))
@@ -1620,13 +1620,13 @@ class SystemBUWindow(QMainWindow):
                 if cu_pct is not None:
                     cu_str = f"{human_size(cu_bytes)} ({cu_pct}%)"
                 else:
-                    cu_str = "â€”"
+                    cu_str = "-"
                 ci = QTreeWidgetItem([
                     "",
                     f"  {cro}{ch['name']}", human_size(ch.get("size")),
                     cu_str,
                     ch.get("type", ""), display_fstype(ch),
-                    ch.get("mountpoint") or "â€”", ch.get("label") or "â€”"])
+                    ch.get("mountpoint") or "-", ch.get("label") or "-"])
                 ci.setData(0, Qt.ItemDataRole.UserRole, ch)
                 item.addChild(ci)
             self.tree.addTopLevelItem(item)
